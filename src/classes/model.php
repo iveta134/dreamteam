@@ -20,7 +20,7 @@ class Model
         // echo "<hr>Connected Successfully!<hr>";
     }
 
-    public function getSongs($songname = null)
+    public function getItems($itemname = null)
     {
         $userid = 0; //we assume we are not logged in yet
         if (isset($_SESSION['id'])) {
@@ -28,19 +28,19 @@ class Model
             $userid = $_SESSION['id'];
             //consider not doing anything maybe
         }
-        if ($songname) {
-            $songname = "%$songname%";
+        if ($itemname) {
+            $itemname = "%$itemname%";
             $stmt = $this->conn->prepare("SELECT *
-                FROM tracks
-                WHERE name LIKE (:songname)
+                FROM tennisitems
+                WHERE name LIKE (:itemname)
                 AND (user_id = :uid)");
-            $stmt->bindParam(':songname', $songname);
+            $stmt->bindParam(':itemname', $itemname);
             $stmt->bindParam(':uid', $userid);
             //NOT SAFE!! https://xkcd.com/327/
-            // $stmt = $this->conn->prepare("SELECT * FROM tracks WHERE name LIKE '%$songname%'");
+            // $stmt = $this->conn->prepare("SELECT * FROM tracks WHERE name LIKE '%$itemname%'");
 
         } else {
-            $stmt = $this->conn->prepare("SELECT * FROM tracks
+            $stmt = $this->conn->prepare("SELECT * FROM tennisitems
                 WHERE (user_id = :uid)
             ");
             $stmt->bindParam(':uid', $userid);
@@ -53,7 +53,7 @@ class Model
         $allRows = $stmt->fetchAll();
         //var_dump($allRows);
         //die("For now");
-        $this->view->printSongs($allRows);
+        $this->view->printItems($allRows);
     }
 
     private function saveImg()
@@ -107,10 +107,10 @@ class Model
         }
     }
 
-    public function addSongs()
+    public function addItems()
     {
         if (!isset($_SESSION['id'])) {
-            die("NOt going to add songs before log in");
+            die("NOt going to add items before log in");
             //consider not doing anything maybe
         }
         $target_file = null;
@@ -125,52 +125,53 @@ class Model
         }
 
         $stmt = $this->conn->prepare("INSERT
-                INTO tracks (name, artist, album, length, user_id, img_loc)
-                VALUES (:songname, :artist, :album, :length, :userid, :img_loc)"); //TODO add real user id not fixed
-        $stmt->bindParam(':songname', $_POST['songname']);
-        $stmt->bindParam(':artist', $_POST['artist']);
-        $stmt->bindParam(':album', $_POST['album']);
-        $stmt->bindParam(':length', $_POST['songlen']);
+                INTO tennisitems (item, firm, description, price, currency, user_id, img_loc)
+                VALUES (:itemname, :firm, :description, :price, :currency, :userid, :img_loc)"); //TODO add real user id not fixed
+        $stmt->bindParam(':itemname', $_POST['itemname']);
+        $stmt->bindParam(':firm', $_POST['firm']);
+        $stmt->bindParam(':description', $_POST['description']);
+        $stmt->bindParam(':price', $_POST['price']);
+        $stmt->bindParam(':currency', $_POST['currency']);
         $stmt->bindParam(':userid', $_SESSION['id']);
         $stmt->bindParam(':img_loc', $target_file);
 
-        //INSERT INTO `tracks` (`id`, `name`, `artist`, `album`, `length`, `created`,
+        //INSERT INTO `tracks` (`id`, `item`, `firm`, `price`, `description`, `created`,
         //`updated`, `user_id`) VALUES (NULL, 'Waterloo', 'Abba', 'Eurovision', '180', current_timestamp(), current_timestamp(), '')
         $stmt->execute();
-        $this->getSongs();
+        $this->getItems();
     }
 
-    public function deleteSongs()
+    public function deleteItems()
     {
         if (!isset($_SESSION['id'])) {
             return;
         }
 
-        $stmt = $this->conn->prepare("DELETE FROM tracks
-            WHERE id = (:songid)
+        $stmt = $this->conn->prepare("DELETE FROM tennisitems
+            WHERE id = (:itemid)
             AND user_id = (:userid)");
 
-        $stmt->bindParam(':songid', $_POST['delForm']);
+        $stmt->bindParam(':itemid', $_POST['delForm']);
         $stmt->bindParam(':userid', $_SESSION['id']);
         $stmt->execute();
-        $this->getSongs();
+        $this->getItems();
         //"DELETE FROM `tracks` WHERE `tracks`.`id` = 14"
     }
 
-    public function updateSongs()
+    public function updateItems()
     {
-        $stmt = $this->conn->prepare("UPDATE tracks
-                SET name = (:songName),
-                artist = (:artist),
+        $stmt = $this->conn->prepare("UPDATE tenissitems
+                SET name = (:itemName),
+                firm = (:firm),
                 updated = CURRENT_TIMESTAMP()
-                WHERE id = (:songid)");
+                WHERE id = (:itemid)");
 
-        $stmt->bindParam(':songName', $_POST['name']); //we have <input name="name"
-        $stmt->bindParam(':artist', $_POST['artist']); //we have <input name="artist"
+        $stmt->bindParam(':itemName', $_POST['name']); //we have <input name="name"
+        $stmt->bindParam(':firm', $_POST['firm']); //we have <input name="artist"
 
-        $stmt->bindParam(':songid', $_POST['updateBtn']);
+        $stmt->bindParam(':itemid', $_POST['updateBtn']);
         $stmt->execute();
-        $this->getSongs();
+        $this->getItems();
         //UPDATE `tracks` SET `name` = 'Ziemelmeitajauka' WHERE `tracks`.`id` = 17
     }
 
@@ -241,6 +242,6 @@ class Model
         $_SESSION['user'] = $_POST['username'];
         $_SESSION['id'] = $this->getId($_POST['username']);
 
-        $this->getSongs();
+        $this->getItems();
     }
 }

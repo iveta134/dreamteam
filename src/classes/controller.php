@@ -18,10 +18,10 @@ class Controller
         }
 
         //so this would be default index.php
-        if (isset($_GET['songname'])) {
-            $this->model->getSongs($_GET['songname']);
+        if (isset($_GET['itemname'])) {
+            $this->model->getItems($_GET['itemname']);
         } else {
-            $this->model->getSongs();
+            $this->model->getItems();
         }
     }
 
@@ -37,14 +37,14 @@ class Controller
         // echo "POST Request<hr>";
         // var_dump($_POST);
         if (isset($_POST['addBtn'])) {
-            $this->model->addSongs();
+            $this->model->addItems();
         } elseif (isset($_POST['delForm'])) {
             // var_dump($_POST);
-            $this->model->deleteSongs();
+            $this->model->deleteItems();
         } elseif (isset($_POST['updateBtn'])) {
-            $this->model->updateSongs();
+            $this->model->updateItems();
             // var_dump($_POST);
-            // $this->model->updateSongs();
+            // $this->model->updateItems();
         } else {
             echo "What button did you press??";
             var_dump($_POST);

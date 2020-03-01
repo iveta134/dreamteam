@@ -12,7 +12,7 @@ body {
     margin: 5px;
 }
 
-.tracks-header-cont {
+.items-header-cont {
     display: flex;
     justify-content: space-between;
 }

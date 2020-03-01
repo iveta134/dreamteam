@@ -7,30 +7,30 @@ class View
         //TODO print all of the page!
     }
 
-    public function printSongs($songs)
+    public function printItems($items)
     {
         require_once "../src/template/head.php";
         require_once "../src/template/header.php";
-        echo "<h1>My Music</h1><hr>";
-        // echo "<hr>Printing songs</br>";
-        // foreach ($songs as $song) {
+        echo "<h1>Tennis item collection</h1><hr>";
+        // echo "<hr>Printing items</br>";
+        // foreach ($songs as $item) {
         //     echo "<br>";
-        //     print_r($song);
+        //     print_r($item);
         // }
-        include "../src/template/add_song_form.php";
+        include "../src/template/add_item_form.php";
         echo "<hr>";
-        if (isset($_GET['songname'])) {
-            $filterValue = $_GET['songname'];
+        if (isset($_GET['itemname'])) {
+            $filterValue = $_GET['itemname'];
         } else {
             $filterValue = "";
         }
-        include "../src/template/song_filter_form.php";
+        include "../src/template/item_filter_form.php";
         echo "<hr>";
         $areColumnsSet = false;
 
-        foreach ($songs as $index => $row) {
+        foreach ($items as $index => $row) {
             if (!$areColumnsSet) {
-                echo "<div class='tracks-header-cont'>";
+                echo "<div class='item-header-cont'>";
                 foreach ($row as $colname => $cell) {
                     echo "<span class='col-fields'>$colname</span>";
                 }
@@ -38,7 +38,7 @@ class View
                 $areColumnsSet = true;
             }
 
-            echo "<div class='tracks-cont'>";
+            echo "<div class='item-cont'>";
             // echo "Row: $index";
             // print_r($row);
             echo "Song No: $index";
@@ -55,10 +55,10 @@ class View
                         //do not show ids
                         break;
                     case "name":
-                        echo "<input class='track-cell' type='text' name='name' value='$cell'></input>";
+                        echo "<input class='item-cell' type='text' name='name' value='$cell'></input>";
                         break;
-                    case "artist":
-                        echo "<input class='track-cell' type='text' name='artist' value='$cell'></input>";
+                    case "firm":
+                        echo "<input class='item-cell' type='text' name='firm' value='$cell'></input>";
                         break;
                     case "img_loc":
                         if ($cell) {
@@ -68,7 +68,7 @@ class View
                         }
                         break;
                     default:
-                        echo "<span class='track-cell'>$cell</span>";
+                        echo "<span class='item-cell'>$cell</span>";
                         break;
                 }
                 //we wrote the below if as switch above
